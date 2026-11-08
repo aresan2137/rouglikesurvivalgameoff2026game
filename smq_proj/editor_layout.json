@@ -1,0 +1,212 @@
+{
+  "surfaces": [
+    {
+      "Main": {
+        "nodes": [
+          {
+            "Horizontal": {
+              "rect": {
+                "min": {
+                  "x": 8.0,
+                  "y": 30.0
+                },
+                "max": {
+                  "x": 1272.0,
+                  "y": 712.0
+                }
+              },
+              "fraction": 0.83554584,
+              "fully_collapsed": false,
+              "collapsed_leaf_count": 0
+            }
+          },
+          {
+            "Horizontal": {
+              "rect": {
+                "min": {
+                  "x": 8.0,
+                  "y": 30.0
+                },
+                "max": {
+                  "x": 1064.0,
+                  "y": 712.0
+                }
+              },
+              "fraction": 0.21800098,
+              "fully_collapsed": false,
+              "collapsed_leaf_count": 0
+            }
+          },
+          {
+            "Leaf": {
+              "rect": {
+                "min": {
+                  "x": 1065.0,
+                  "y": 30.0
+                },
+                "max": {
+                  "x": 1272.0,
+                  "y": 712.0
+                }
+              },
+              "viewport": {
+                "min": {
+                  "x": 1065.0,
+                  "y": 54.0
+                },
+                "max": {
+                  "x": 1272.0,
+                  "y": 712.0
+                }
+              },
+              "tabs": [
+                "Inspector"
+              ],
+              "active": 0,
+              "scroll": 0.0,
+              "collapsed": false
+            }
+          },
+          {
+            "Leaf": {
+              "rect": {
+                "min": {
+                  "x": 8.0,
+                  "y": 30.0
+                },
+                "max": {
+                  "x": 238.0,
+                  "y": 712.0
+                }
+              },
+              "viewport": {
+                "min": {
+                  "x": 8.0,
+                  "y": 54.0
+                },
+                "max": {
+                  "x": 238.0,
+                  "y": 712.0
+                }
+              },
+              "tabs": [
+                "SceneView"
+              ],
+              "active": 0,
+              "scroll": 0.0,
+              "collapsed": false
+            }
+          },
+          {
+            "Vertical": {
+              "rect": {
+                "min": {
+                  "x": 239.0,
+                  "y": 30.0
+                },
+                "max": {
+                  "x": 1064.0,
+                  "y": 712.0
+                }
+              },
+              "fraction": 0.7142121,
+              "fully_collapsed": false,
+              "collapsed_leaf_count": 0
+            }
+          },
+          "Empty",
+          "Empty",
+          "Empty",
+          "Empty",
+          {
+            "Leaf": {
+              "rect": {
+                "min": {
+                  "x": 239.0,
+                  "y": 30.0
+                },
+                "max": {
+                  "x": 1064.0,
+                  "y": 517.0
+                }
+              },
+              "viewport": {
+                "min": {
+                  "x": 239.0,
+                  "y": 54.0
+                },
+                "max": {
+                  "x": 1064.0,
+                  "y": 517.0
+                }
+              },
+              "tabs": [
+                "Viewport",
+                "Settings"
+              ],
+              "active": 0,
+              "scroll": 0.0,
+              "collapsed": false
+            }
+          },
+          {
+            "Leaf": {
+              "rect": {
+                "min": {
+                  "x": 239.0,
+                  "y": 518.0
+                },
+                "max": {
+                  "x": 1064.0,
+                  "y": 712.0
+                }
+              },
+              "viewport": {
+                "min": {
+                  "x": 239.0,
+                  "y": 542.0
+                },
+                "max": {
+                  "x": 1064.0,
+                  "y": 712.0
+                }
+              },
+              "tabs": [
+                "Assets"
+              ],
+              "active": 0,
+              "scroll": 0.0,
+              "collapsed": false
+            }
+          },
+          "Empty",
+          "Empty",
+          "Empty",
+          "Empty"
+        ],
+        "focused_node": 9,
+        "collapsed": false,
+        "collapsed_leaf_count": 0
+      }
+    }
+  ],
+  "focused_surface": 0,
+  "translations": {
+    "tab_context_menu": {
+      "close_button": "Close",
+      "eject_button": "Eject"
+    },
+    "leaf": {
+      "close_button_disabled_tooltip": "This leaf contains non-closable tabs.",
+      "close_all_button": "Close window",
+      "close_all_button_menu_hint": "Right click to close this window.",
+      "close_all_button_modifier_hint": "Press modifier keys (Shift by default) to close this window.",
+      "close_all_button_modifier_menu_hint": "Press modifier keys (Shift by default) or right click to close this window.",
+      "close_all_button_disabled_tooltip": "This window contains non-closable tabs.",
+      "minimize_button": "Minimize window",
+      "minimize_button_menu_hint": "Right click to minimize this window.",
+      "minimize_button_modifier_hint": "Press modifier keys (Shift by default) to minimize this window.",
+      "minimize_button_modifier_menu_hint": "Press modifier keys (Shift by default) or right click to minimize this window."
+    }
+  }
+}
