@@ -53,8 +53,7 @@ pub fn load_assets(context: &mut Context<Renderer>) {
     let mut gen_assets = GenAssets::init_gen_assets(context, &ssf_data);
 
     let aspect = 16.0/9.0;
-    gen_assets.ubodata0.data.proj =
-        camera::rh::proj::directx::orthographic(10.0 * aspect, -10.0 * aspect, -10.0, 10.0, 1.0, -1.0);
+    gen_assets.ubodata0.data.proj = camera::rh::proj::directx::orthographic(-10.0 * aspect, 10.0 * aspect, -10.0, 10.0, 1.0, -1.0);
 
     gen_assets.ubodata0.upload_data(context);
     gen_assets.dubodata2.upload_data(context);
@@ -98,7 +97,7 @@ pub fn load_assets(context: &mut Context<Renderer>) {
 
     let mat1 = RenderMaterial::new(
         context,
-        Some(Face::Back),
+        None,
         None,
         &gen_assets.renderer_main_renderTexture,
         &mat1module,
@@ -126,6 +125,8 @@ pub struct DrawedObject {
     pub size: Vec3,
     pub meshid: Meshes,
     pub textureid: Textures,
+    pub is_gui: bool,
+    pub enabled: bool
 }
 
 #[allow(unused)]
@@ -154,12 +155,12 @@ pub fn render(context: &mut Context<Renderer>, full_output: ::egui::FullOutput) 
         let mut objects_query = context.world.query::<&DrawedObject>();
         let mut objects_to_draw = Vec::new();
         for (i, pos) in objects_query.iter(&context.world).enumerate() {
-            let model_matrix =
-                Mat4::from_scale_rotation_translation(pos.size, pos.rotation, pos.position);
+            let model_matrix = Mat4::from_scale_rotation_translation(pos.size, pos.rotation, pos.position);
 
             data.gen_assets.dubodata2.data[i].model = model_matrix;
+            data.gen_assets.dubodata2.data[i].is_gui = pos.is_gui as u32;
 
-            objects_to_draw.push((pos.meshid, pos.textureid));
+            objects_to_draw.push((pos.meshid, pos.textureid, pos.enabled));
         }
 
         data.gen_assets.dubodata2.upload_data(&context);
@@ -175,12 +176,14 @@ pub fn render(context: &mut Context<Renderer>, full_output: ::egui::FullOutput) 
             for i in 0..objects_to_draw.len()  {
                 let obj = objects_to_draw[i];
 
-                let gutid = obj.0 as usize;
-                
-                render_pass.set_bind_group(2, &data.bind_group2_lin[obj.1 as usize].bind_group, &[i as u32 * 256]);
+                if obj.2 {
+                    let gutid = obj.0 as usize;
+                    
+                    render_pass.set_bind_group(2, &data.bind_group2_lin[obj.1 as usize].bind_group, &[i as u32 * 256]);
 
-                render_pass.set_vertex_buffer(0, data.gen_assets.meshes[gutid].buffer.slice(..));
-                render_pass.draw(0..data.gen_assets.meshes[gutid].vertex_count, 0..1);
+                    render_pass.set_vertex_buffer(0, data.gen_assets.meshes[gutid].buffer.slice(..));
+                    render_pass.draw(0..data.gen_assets.meshes[gutid].vertex_count, 0..1);
+                }
             }
         }
 

@@ -7,7 +7,8 @@ struct UboData1 {
 }
 
 struct DUboData2 {
-    model: mat4x4f
+    model: mat4x4f,
+    is_gui: u32
 }
 
 @group(0) @binding(0) var<uniform> data0: UboData0;
@@ -33,7 +34,12 @@ struct VertexOutput {
 fn vs_main(in: VertexData) -> VertexOutput {
     var out: VertexOutput;
 
-    out.pos = data0.proj * data1.view * data2.model * vec4f(in.position, 1.0);
+    if (data2.is_gui == 1u) {
+        out.pos = data0.proj * data2.model * vec4f(in.position, 1.0);
+    } else {
+        out.pos = data0.proj * data1.view * data2.model * vec4f(in.position, 1.0);
+    }
+
     out.uv = in.uv;
 
     return out;

@@ -18,12 +18,18 @@ pub struct InputGetan {
     pub now_setting: usize,
     pub still_holding: bool,
     pub owner: InputOwner,
+    request_clear: bool,
     time_secs: f32,
     none_timer: f32
 }
 
 impl InputGetan {
-    pub fn reset_colective(&mut self) {
+    pub fn reset_long(&mut self) {
+        self.request_clear = true;
+    }
+
+    pub fn reset_short(&mut self) {
+        self.request_clear = true;
         self.now_setting = 0;
         self.still_holding = false;
     }
@@ -36,6 +42,7 @@ impl Default for InputGetan {
             now_setting: 0, 
             still_holding: false,
             owner: InputOwner::Gameplay,
+            request_clear: false,
             time_secs: 0.0,
             none_timer: 0.0            
         };
@@ -77,6 +84,10 @@ pub fn read_input(mut input_getan: ResMut<InputGetan>, input: Res<Inputs>, time:
         input_getan.time_secs = 0.0;
         input_getan.none_timer += time.delta;
         input_getan.still_holding = false;
+        if input_getan.request_clear {
+            input_getan.request_clear = false;
+            input_getan.now_setting = 0;
+        }
     }
 
     if input_getan.now_setting == 0 {
