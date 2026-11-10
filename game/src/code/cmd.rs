@@ -209,15 +209,15 @@ fn process_command(
                 // guns
                 "glock19" | "glock" => {
                     let ammo = sub_args.first().and_then(|v| v.parse().ok()).unwrap_or(15);
-                    Some(Item::Glock19(ammo))
+                    Some(Item::Glock19((ammo, 0.0)))
                 }
                 "ak47" | "ak" => {
                     let ammo = sub_args.first().and_then(|v| v.parse().ok()).unwrap_or(30);
-                    Some(Item::AK47(ammo))
+                    Some(Item::AK47((ammo, 0.0)))
                 }
                 "shotgun" => {
                     let ammo = sub_args.first().and_then(|v| v.parse().ok()).unwrap_or(8);
-                    Some(Item::Shotgun(ammo))
+                    Some(Item::Shotgun((ammo, 0.0)))
                 }
 
                 // ammo
@@ -237,11 +237,11 @@ fn process_command(
                 // tools
                 "flashlight" => {
                     let val = sub_args.first().and_then(|v| v.parse().ok()).unwrap_or(1.0);
-                    Some(Item::Flashlight(val))
+                    Some(Item::Flashlight((val, false)))
                 }
                 "torch" => {
                     let val = sub_args.first().and_then(|v| v.parse().ok()).unwrap_or(1.0);
-                    Some(Item::Torch(val))
+                    Some(Item::Torch((val, false)))
                 }
                 "crowbar" => Some(Item::Crowbar),
                 "lighter" => {

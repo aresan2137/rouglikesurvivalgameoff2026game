@@ -1,15 +1,20 @@
 use bevy_ecs::prelude::*;
+use glam::Vec2;
 use smq_engine::*;
 use winit::keyboard::KeyCode;
 
-const LONG_DURATION: f32 = 0.1;
-const RESET_ALL_DURATION: f32 = 0.5;
+use crate::renderer::{draw_free_left_text, draw_free_uniform_text};
+
+const LONG_DURATION: f32 = 0.15;
+const RESET_ALL_DURATION: f32 = 0.6;
 const MEMORY_LENGTH: usize = 4;
 
 #[derive(PartialEq, Eq)]
 pub enum InputOwner {
     Gameplay,
-    Inventory
+    Inventory,
+    InventoryContextMenu,
+    HealthManagment
 }
 
 #[derive(Resource)]
@@ -94,14 +99,10 @@ pub fn read_input(mut input_getan: ResMut<InputGetan>, input: Res<Inputs>, time:
         input_getan.none_timer = 0.0;
     }
 
-    egui::Window::new("Input")
-        .default_width(400.0)
-        .show(&ui(), |ui| {
-            let mut text = "".to_string();
-            for i in 0..input_getan.now_setting {
-                text += if input_getan.morse_input[i] { "_" } else { "." };
-            }
-            ui.label(format!("code: {}", text));
-            ui.label(format!("still holding: {}", input_getan.still_holding));
-        });
+    let mut text = "".to_string();
+    for i in 0..input_getan.now_setting {
+        text += if input_getan.morse_input[i] { "_" } else { "." };
+    }
+
+    draw_free_left_text(&format!("code: {}\nstill holding: {}", text, input_getan.still_holding), Vec2::new(-1.0, -0.9), Vec2::new(4.0, 0.0), 24.0);
 }
