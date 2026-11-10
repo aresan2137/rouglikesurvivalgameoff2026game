@@ -3,7 +3,7 @@ use egui::{self, Color32, ScrollArea, TextEdit};
 use smq_engine::*;
 use winit::keyboard::KeyCode;
 
-use crate::code::{InventorySettings, Item, ItemLiquidType};
+use crate::code::{InventorySettings, Item, ItemLiquidType, Level};
 
 #[derive(Resource)]
 pub struct Console {
@@ -17,7 +17,7 @@ impl Default for Console {
         Self {
             is_open: false,
             input_buffer: String::new(),
-            history: vec!["SMQ Console initialized. Type 'help' for info.".to_string()],
+            history: Vec::new(),
         }
     }
 }
@@ -26,6 +26,7 @@ pub fn toggle_console_system(
     mut console: ResMut<Console>,
     input: Res<Inputs>,
     mut inventory: Query<&mut InventorySettings>,
+    mut map: ResMut<Level>
 ) {
     if input.pressed(KeyCode::Backquote) {
         console.is_open = !console.is_open;
@@ -86,7 +87,7 @@ pub fn toggle_console_system(
 
     if let Some(cmd) = execute_cmd {
         console.history.push(format!("> {cmd}"));
-        process_command(&cmd, &mut console, &mut inventory);
+        process_command(&cmd, &mut console, &mut inventory, &mut map);
     }
 }
 
@@ -107,6 +108,7 @@ fn process_command(
     raw_input: &str,
     console: &mut Console,
     inventory: &mut Query<&mut InventorySettings>,
+    map: &mut Level
 ) {
     let mut parts = raw_input.split_whitespace();
     let command = parts.next().unwrap_or("").to_lowercase();
@@ -117,13 +119,13 @@ fn process_command(
             console.history.push("commands:".to_string());
             console.history.push("  clear              - clears console log".to_string());
             console.history.push("  set_item help      - help for set_item command".to_string());
-            console.history.push("  echo <text>        - print text".to_string());
+            console.history.push("  reset_map          - resets map".to_string());
         }
         "clear" => {
             console.history.clear();
         }
-        "echo" => {
-            console.history.push(args.join(" "));
+        "resetmap" | "reset_map" => {
+            map.generate_new_map();
         }
         "set_item" | "setitem" => {
             if args.is_empty() || args[0].eq_ignore_ascii_case("help") {

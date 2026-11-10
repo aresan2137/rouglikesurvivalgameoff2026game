@@ -17,42 +17,43 @@ pub enum Meshes {
 #[repr(usize)]
 #[derive(Clone, Copy)]
 pub enum Textures {
-    sprites_AK47_png = 0,
-    sprites_Ammo7_62mm_png = 1,
-    sprites_Ammo9mm_png = 2,
-    sprites_AntiBiotic_png = 3,
-    sprites_Antiseptic_png = 4,
-    sprites_Apple_png = 5,
-    sprites_Backpack_png = 6,
-    sprites_Banana_png = 7,
-    sprites_Bandage_png = 8,
-    sprites_Bottle1l_png = 9,
-    sprites_Bottle2l_png = 10,
-    sprites_Bottle300ml_png = 11,
-    sprites_Bottle500ml_png = 12,
-    sprites_Bread_png = 13,
-    sprites_bullet_stroke_png = 14,
-    sprites_Cerial_png = 15,
-    sprites_Cloth_png = 16,
-    sprites_Crowbar_png = 17,
-    sprites_Flashlight_png = 18,
-    sprites_FlintAndSteel_png = 19,
-    sprites_FoodRation_png = 20,
-    sprites_Glock19_png = 21,
-    sprites_gray_color = 22,
-    sprites_Knife_png = 23,
-    sprites_Lighter_png = 24,
-    sprites_PlasticBag_png = 25,
-    sprites_plr_png = 26,
-    sprites_ProteinBar_png = 27,
-    sprites_RottenFood_png = 28,
-    sprites_Shotgun_png = 29,
-    sprites_Shotgunshells_png = 30,
-    sprites_Soap_png = 31,
-    sprites_SterileBandage_png = 32,
-    sprites_Syringe_png = 33,
-    sprites_Torch_png = 34,
-    sprites_WaterFilter_png = 35,
+    sprites_bullet_stroke_png = 0,
+    sprites_gray_color = 1,
+    sprites_items_AK47_png = 2,
+    sprites_items_Ammo7_62mm_png = 3,
+    sprites_items_Ammo9mm_png = 4,
+    sprites_items_AntiBiotic_png = 5,
+    sprites_items_Antiseptic_png = 6,
+    sprites_items_Apple_png = 7,
+    sprites_items_Backpack_png = 8,
+    sprites_items_Banana_png = 9,
+    sprites_items_Bandage_png = 10,
+    sprites_items_Bottle1l_png = 11,
+    sprites_items_Bottle2l_png = 12,
+    sprites_items_Bottle300ml_png = 13,
+    sprites_items_Bottle500ml_png = 14,
+    sprites_items_Bread_png = 15,
+    sprites_items_Cerial_png = 16,
+    sprites_items_Cloth_png = 17,
+    sprites_items_Crowbar_png = 18,
+    sprites_items_Flashlight_png = 19,
+    sprites_items_FlintAndSteel_png = 20,
+    sprites_items_FoodRation_png = 21,
+    sprites_items_Glock19_png = 22,
+    sprites_items_Knife_png = 23,
+    sprites_items_Lighter_png = 24,
+    sprites_items_PlasticBag_png = 25,
+    sprites_items_ProteinBar_png = 26,
+    sprites_items_RottenFood_png = 27,
+    sprites_items_Shotgun_png = 28,
+    sprites_items_Shotgunshells_png = 29,
+    sprites_items_Soap_png = 30,
+    sprites_items_SterileBandage_png = 31,
+    sprites_items_Syringe_png = 32,
+    sprites_items_Torch_png = 33,
+    sprites_items_WaterFilter_png = 34,
+    sprites_plr_png = 35,
+    sprites_tilemap_png = 36,
 }
 
 #[repr(C)]
@@ -109,7 +110,7 @@ pub struct GenAssets {
     pub blitinfo: BlitInfo,
     pub blit_group: BindGroupS,
     pub meshes: [Mesh; 2],
-    pub textures: [TextureS; 36],
+    pub textures: [TextureS; 37],
 }
 
 impl GenAssets {
@@ -132,7 +133,16 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_AK47_png"),
+                Some("sprites_bullet_stroke_png"),
+            ),
+            TextureS::from_color(
+                context,
+                Color {
+                    r: 0.26996854,
+                    g: 0.26996854,
+                    b: 0.26996854,
+                    a: 1.00000000,
+                },
             ),
             TextureS::new(
                 context,
@@ -141,7 +151,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Ammo7_62mm_png"),
+                Some("sprites_items_AK47_png"),
             ),
             TextureS::new(
                 context,
@@ -150,7 +160,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Ammo9mm_png"),
+                Some("sprites_items_Ammo7_62mm_png"),
             ),
             TextureS::new(
                 context,
@@ -159,7 +169,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_AntiBiotic_png"),
+                Some("sprites_items_Ammo9mm_png"),
             ),
             TextureS::new(
                 context,
@@ -168,7 +178,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Antiseptic_png"),
+                Some("sprites_items_AntiBiotic_png"),
             ),
             TextureS::new(
                 context,
@@ -177,7 +187,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Apple_png"),
+                Some("sprites_items_Antiseptic_png"),
             ),
             TextureS::new(
                 context,
@@ -186,7 +196,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Backpack_png"),
+                Some("sprites_items_Apple_png"),
             ),
             TextureS::new(
                 context,
@@ -195,7 +205,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Banana_png"),
+                Some("sprites_items_Backpack_png"),
             ),
             TextureS::new(
                 context,
@@ -204,7 +214,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Bandage_png"),
+                Some("sprites_items_Banana_png"),
             ),
             TextureS::new(
                 context,
@@ -213,7 +223,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Bottle1l_png"),
+                Some("sprites_items_Bandage_png"),
             ),
             TextureS::new(
                 context,
@@ -222,7 +232,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Bottle2l_png"),
+                Some("sprites_items_Bottle1l_png"),
             ),
             TextureS::new(
                 context,
@@ -231,7 +241,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Bottle300ml_png"),
+                Some("sprites_items_Bottle2l_png"),
             ),
             TextureS::new(
                 context,
@@ -240,7 +250,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Bottle500ml_png"),
+                Some("sprites_items_Bottle300ml_png"),
             ),
             TextureS::new(
                 context,
@@ -249,7 +259,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Bread_png"),
+                Some("sprites_items_Bottle500ml_png"),
             ),
             TextureS::new(
                 context,
@@ -258,7 +268,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_bullet_stroke_png"),
+                Some("sprites_items_Bread_png"),
             ),
             TextureS::new(
                 context,
@@ -267,7 +277,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Cerial_png"),
+                Some("sprites_items_Cerial_png"),
             ),
             TextureS::new(
                 context,
@@ -276,7 +286,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Cloth_png"),
+                Some("sprites_items_Cloth_png"),
             ),
             TextureS::new(
                 context,
@@ -285,7 +295,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Crowbar_png"),
+                Some("sprites_items_Crowbar_png"),
             ),
             TextureS::new(
                 context,
@@ -294,7 +304,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Flashlight_png"),
+                Some("sprites_items_Flashlight_png"),
             ),
             TextureS::new(
                 context,
@@ -303,7 +313,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_FlintAndSteel_png"),
+                Some("sprites_items_FlintAndSteel_png"),
             ),
             TextureS::new(
                 context,
@@ -312,7 +322,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_FoodRation_png"),
+                Some("sprites_items_FoodRation_png"),
             ),
             TextureS::new(
                 context,
@@ -321,16 +331,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Glock19_png"),
-            ),
-            TextureS::from_color(
-                context,
-                Color {
-                    r: 0.45579547,
-                    g: 0.45579547,
-                    b: 0.45579547,
-                    a: 1.00000000,
-                },
+                Some("sprites_items_Glock19_png"),
             ),
             TextureS::new(
                 context,
@@ -339,7 +340,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Knife_png"),
+                Some("sprites_items_Knife_png"),
             ),
             TextureS::new(
                 context,
@@ -348,7 +349,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Lighter_png"),
+                Some("sprites_items_Lighter_png"),
             ),
             TextureS::new(
                 context,
@@ -357,7 +358,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_PlasticBag_png"),
+                Some("sprites_items_PlasticBag_png"),
             ),
             TextureS::new(
                 context,
@@ -366,7 +367,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_plr_png"),
+                Some("sprites_items_ProteinBar_png"),
             ),
             TextureS::new(
                 context,
@@ -375,7 +376,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_ProteinBar_png"),
+                Some("sprites_items_RottenFood_png"),
             ),
             TextureS::new(
                 context,
@@ -384,7 +385,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_RottenFood_png"),
+                Some("sprites_items_Shotgun_png"),
             ),
             TextureS::new(
                 context,
@@ -393,7 +394,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Shotgun_png"),
+                Some("sprites_items_Shotgunshells_png"),
             ),
             TextureS::new(
                 context,
@@ -402,7 +403,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Shotgunshells_png"),
+                Some("sprites_items_Soap_png"),
             ),
             TextureS::new(
                 context,
@@ -411,7 +412,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Soap_png"),
+                Some("sprites_items_SterileBandage_png"),
             ),
             TextureS::new(
                 context,
@@ -420,7 +421,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_SterileBandage_png"),
+                Some("sprites_items_Syringe_png"),
             ),
             TextureS::new(
                 context,
@@ -429,7 +430,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Syringe_png"),
+                Some("sprites_items_Torch_png"),
             ),
             TextureS::new(
                 context,
@@ -438,7 +439,7 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_Torch_png"),
+                Some("sprites_items_WaterFilter_png"),
             ),
             TextureS::new(
                 context,
@@ -447,7 +448,16 @@ impl GenAssets {
                 1,
                 TextureFormat::Rgba8UnormSrgb,
                 AddressMode::Repeat,
-                Some("sprites_WaterFilter_png"),
+                Some("sprites_plr_png"),
+            ),
+            TextureS::new(
+                context,
+                ssf_data[37].as_ref(),
+                smq_engine::SamplingMode::Nearest,
+                1,
+                TextureFormat::Rgba8UnormSrgb,
+                AddressMode::Repeat,
+                Some("sprites_tilemap_png"),
             ),
         ];
 

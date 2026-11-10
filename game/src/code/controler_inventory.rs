@@ -48,7 +48,7 @@ pub fn setup_inventory(world: &mut World) {
             rotation: Quat::IDENTITY,
             size: Vec3::new(2.0, 2.0, 2.0),
             meshid: Meshes::mesh_Plane_smf,
-            textureid: Textures::sprites_ProteinBar_png,
+            textureid: Textures::sprites_items_ProteinBar_png,
             is_gui: true,
             enabled: false
         }, InventoryItemDisplay {
@@ -95,7 +95,39 @@ pub fn controler_inventory(
                 if input_getan.now_setting == 2 {
                     if ine[0] == true && ine[1] == true { // __
                         input_getan.reset_short();
-                        
+                        let idx = sett.selected_item;
+                        sett.item.swap(idx, 6);
+                    }
+                } else if input_getan.now_setting == 3 {
+                    if ine[0] == true && ine[1] == false && ine[2] == true  { // _._
+                        input_getan.reset_short();
+                        if sett.item[sett.selected_item] != Item::None {
+                            input_getan.owner = InputOwner::InventoryContextMenu;
+                        }
+                    }
+                    if ine[0] == true && ine[1] == false && ine[2] == false  { // _..
+                        input_getan.reset_short();
+                        log::info!("simple use");
+                    }
+
+                    if ine[0] == false && ine[1] == true && ine[2] == true  { // .__
+                        input_getan.reset_short();
+                        if sett.selected_item == 5 {
+                            sett.selected_item = 0;
+                        } else {
+                            sett.selected_item += 1;
+                        }
+                    }
+                    if ine[0] == false && ine[1] == false && ine[2] == true  { // .._
+                        input_getan.reset_short();
+                        if sett.selected_item == 0 {
+                            sett.selected_item = 5;
+                        } else {
+                            sett.selected_item -= 1;
+                        }
+                    }
+                    if ine[0] == false && ine[1] == true && ine[2] == false  { // ._.
+                        input_getan.reset_short();
                         if sett.item[6] != Item::None {
                             let pos = freecam.position.xy();
                             commands.spawn((DrawedObject {
@@ -132,40 +164,10 @@ pub fn controler_inventory(
 
                             sett.item[selectedid] = Item::None;
                         }
-
                     }
-                    if ine[0] == false && ine[1] == true { // ._
-                        input_getan.reset_short();
-                        let idx = sett.selected_item;
-                        sett.item.swap(idx, 6);
-                    }
-                } else if input_getan.now_setting == 3 {
-                    if ine[0] == true && ine[1] == false && ine[2] == true  { // _._
-                        input_getan.reset_short();
-                        if sett.selected_item == 5 {
-                            sett.selected_item = 0;
-                        } else {
-                            sett.selected_item += 1;
-                        }
-                    }
-                    if ine[0] == false && ine[1] == false && ine[2] == true  { // .._
-                        input_getan.reset_short();
-                        if sett.selected_item == 0 {
-                            sett.selected_item = 5;
-                        } else {
-                            sett.selected_item -= 1;
-                        }
-                    }
-                    if ine[0] == true && ine[1] == false && ine[2] == false  { // _..
+                    if ine[0] == false && ine[1] == false && ine[2] == false { // ...
                         input_getan.reset_short();
                         input_getan.owner = InputOwner::Gameplay;
-                        log::info!("inventory OFF");
-                    }
-                    if ine[0] == false && ine[1] == false && ine[2] == false && ine[3] { // ...
-                        input_getan.reset_short();
-                        if sett.item[sett.selected_item] != Item::None {
-                            input_getan.owner = InputOwner::InventoryContextMenu;
-                        }
                     }
                 }
             }

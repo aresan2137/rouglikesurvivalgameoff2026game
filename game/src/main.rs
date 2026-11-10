@@ -27,12 +27,16 @@ fn main() {
     let mut world = World::new();
     world.insert_resource(Delta::new());
     world.insert_resource(Inputs::default());
-    world.insert_resource(FrameStats::default());
+    //world.insert_resource(FrameStats::default());
     world.insert_resource(InputGetan::default());
     world.insert_resource(Console::default());
 
+    let mut level = Level::default();
+    level.generate_new_map();
+    world.insert_resource(level);
+
     let mut schedule = Schedule::default();
-    schedule.add_systems(fps_logger);
+    //schedule.add_systems(fps_logger);
     schedule.add_systems(read_input);
     schedule.add_systems(controler_gameplay);
     schedule.add_systems(controler_inventory);
@@ -83,7 +87,7 @@ fn main() {
         rotation: Quat::IDENTITY,
         size: Vec3::ONE,
         meshid: Meshes::mesh_Plane_smf,
-        textureid: Textures::sprites_ProteinBar_png,
+        textureid: Textures::sprites_items_ProteinBar_png,
         is_gui: false,
         enabled: true
     });

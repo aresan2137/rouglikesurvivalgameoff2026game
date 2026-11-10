@@ -32,7 +32,8 @@ pub fn controler_gameplay(
                     input_getan.reset_long();
                     position(&mut obj, &mut freecam, time.delta);
                 }
-                if ine[0] == false && ine[1] == true { // ._
+            } else if input_getan.now_setting == 3 {
+                if ine[0] == true && ine[1] == false && ine[2] == true  { // _._
                     let is_long = hand_use(&mut commands, &mut inventory, &mut droped_items, 0, &mut obj, &mut health);
                     if is_long {
                         input_getan.reset_long();
@@ -40,8 +41,15 @@ pub fn controler_gameplay(
                         input_getan.reset_short();
                     }
                 }
-            } else if input_getan.now_setting == 3 {
-                if ine[0] == true && ine[1] == false && ine[2] == true  { // _._
+                if ine[0] == true && ine[1] == false && ine[2] == false  { // _..
+                    let is_long = hand_use(&mut commands, &mut inventory, &mut droped_items, 4, &mut obj, &mut health);
+                    if is_long {
+                        input_getan.reset_long();
+                    } else {
+                        input_getan.reset_short();
+                    }
+                }
+                if ine[0] == false && ine[1] == true && ine[2] == true  { // .__
                     input_getan.reset_long();
                     rotate(-1.0, &mut sett.rotation, &mut obj, time.delta);
                 }
@@ -49,18 +57,13 @@ pub fn controler_gameplay(
                     input_getan.reset_long();
                     rotate(1.0, &mut sett.rotation, &mut obj, time.delta);
                 }
-                if ine[0] == true && ine[1] == false && ine[2] == false  { // _..
+                if ine[0] == false && ine[1] == true && ine[2] == false  { // ._.
                     input_getan.reset_short();
-                    input_getan.owner = InputOwner::Inventory;
-                    log::info!("inventory ON");
+                    log::info!("wolne");
                 }
                 if ine[0] == false && ine[1] == false && ine[2] == false  { // ...
-                    let is_long = hand_use(&mut commands, &mut inventory, &mut droped_items, 4, &mut obj, &mut health);
-                    if is_long {
-                        input_getan.reset_long();
-                    } else {
-                        input_getan.reset_short();
-                    }
+                    input_getan.reset_short();
+                    input_getan.owner = InputOwner::Inventory;
                 }
             }
         }

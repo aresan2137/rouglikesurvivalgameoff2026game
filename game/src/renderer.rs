@@ -9,15 +9,18 @@ use smq_engine::{
 use wgpu::*;
 
 use crate::{
-    gen_bake::{GenAssets, Meshes, Textures}};
+    code::{Level, MAP_SIZE, TILE_SCALE}, gen_bake::{GenAssets, Meshes, Textures}};
 
 #[allow(unused)]
 pub struct Renderer {
     gen_assets: GenAssets,
     mat1: RenderMaterial,
+    mat2: RenderMaterial,
     bind_group0: BindGroupS,
     bind_group1: BindGroupS,
-    bind_group2_lin: Vec<BindGroupS>
+    bind_group2_lin: Vec<BindGroupS>,
+    bind_group3: BindGroupS,
+    tilemap_buffer: Buffer
 }
 
 fn new_texture_binding(context: &mut Context<Renderer>, gen_assets: &GenAssets) -> Vec<BindGroupS> {
@@ -74,6 +77,34 @@ pub fn load_assets(context: &mut Context<Renderer>) {
 
     let holding = context.holding.as_mut().unwrap();
 
+    let tilemap_buffer = holding.device.create_buffer(&BufferDescriptor {
+        label: None,
+        size: (MAP_SIZE.x * MAP_SIZE.y) as BufferAddress,
+        usage: BufferUsages::STORAGE | BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+
+    let bind_group3 = BindGroupS::new(context, &[
+        BindingS {
+            entry_layout: BindGroupLayoutEntry {
+                binding: 0,
+                visibility: ShaderStages::FRAGMENT | ShaderStages::VERTEX,
+                ty: BindingType::Buffer {
+                    ty: BufferBindingType::Storage { read_only: true },
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
+                },
+                count: None,
+            },
+            entry: BindGroupEntry {
+                binding: 0,
+                resource: tilemap_buffer.as_entire_binding(),
+            }
+        }
+    ], None);
+
+    let holding = context.holding.as_mut().unwrap();
+
     let mat1layout = holding
         .device
         .create_pipeline_layout(&PipelineLayoutDescriptor {
@@ -86,7 +117,6 @@ pub fn load_assets(context: &mut Context<Renderer>) {
             ],
             immediate_size: 0,
         });
-
 
     let mat1module = holding.device.create_shader_module(ShaderModuleDescriptor {
         label: None,
@@ -109,12 +139,52 @@ pub fn load_assets(context: &mut Context<Renderer>) {
         Some(true)
     );
 
+    let holding = context.holding.as_mut().unwrap();
+
+    let mat2layout = holding
+        .device
+        .create_pipeline_layout(&PipelineLayoutDescriptor {
+            label: None,
+            bind_group_layouts: &[
+                Some(&bind_group0.bind_group_layout),
+                Some(&bind_group1.bind_group_layout),
+                Some(&bind_group2_lin[0].bind_group_layout),
+                Some(&bind_group3.bind_group_layout),
+            ],
+            immediate_size: 0,
+        });
+
+
+    let mat2module = holding.device.create_shader_module(ShaderModuleDescriptor {
+        label: None,
+        source: ShaderSource::Wgsl(std::borrow::Cow::Borrowed(include_str!(
+            "../../smq_proj/assets/renderer/shaders/tilemap.wgsl"
+        ))),
+    });
+
+    let mat2 = RenderMaterial::new(
+        context,
+        None,
+        None,
+        &gen_assets.renderer_main_renderTexture,
+        &mat2module,
+        None,
+        get_default_vert_layout(),
+        Some(CompareFunction::Less),
+        &mat2layout,
+        None,
+        Some(true)
+    );
+
     context.data = Some(Renderer {
         gen_assets,
         mat1,
+        mat2,
         bind_group0,
         bind_group1,
-        bind_group2_lin
+        bind_group2_lin,
+        bind_group3,
+        tilemap_buffer
     });
 }
 
@@ -128,6 +198,8 @@ pub struct DrawedObject {
     pub is_gui: bool,
     pub enabled: bool
 }
+
+static mut LAST_QUERY_SIZE: usize = 0;
 
 #[allow(unused)]
 pub fn render(context: &mut Context<Renderer>, full_output: ::egui::FullOutput) {
@@ -153,27 +225,71 @@ pub fn render(context: &mut Context<Renderer>, full_output: ::egui::FullOutput) 
         }
 
         let mut objects_query = context.world.query::<&DrawedObject>();
-        let mut objects_to_draw = Vec::new();
+        let mut objects_to_draw = Vec::with_capacity(unsafe { LAST_QUERY_SIZE });
+
+        {
+            let model_matrix = Mat4::from_scale_rotation_translation(Vec3::new(MAP_SIZE.x as f32 * TILE_SCALE, MAP_SIZE.y as f32 * TILE_SCALE, 1.0), Quat::IDENTITY, Vec3::new(0.0, 0.0, 0.5));
+
+            data.gen_assets.dubodata2.data[0].model = model_matrix;
+            data.gen_assets.dubodata2.data[0].is_gui = 0;
+
+            objects_to_draw.push((Meshes::mesh_Plane_smf, Textures::sprites_tilemap_png, true));
+        }
+
         for (i, pos) in objects_query.iter(&context.world).enumerate() {
             let model_matrix = Mat4::from_scale_rotation_translation(pos.size, pos.rotation, pos.position);
 
-            data.gen_assets.dubodata2.data[i].model = model_matrix;
-            data.gen_assets.dubodata2.data[i].is_gui = pos.is_gui as u32;
+            data.gen_assets.dubodata2.data[i + 1].model = model_matrix;
+            data.gen_assets.dubodata2.data[i + 1].is_gui = pos.is_gui as u32;
 
             objects_to_draw.push((pos.meshid, pos.textureid, pos.enabled));
         }
+
+        unsafe {
+            LAST_QUERY_SIZE = objects_to_draw.len();
+        }
+
+        let mut level = context.world.resource_mut::<Level>();
+
+        if level.resend_data {
+            
+            let holding = context.holding.as_mut().unwrap();
+
+            holding.queue.write_buffer(&data.tilemap_buffer, 0, unsafe {
+                std::slice::from_raw_parts(
+                    level.map.as_ptr() as *const u8,
+                    level.map.len(),
+                )
+            });
+
+            level.resend_data = false;
+        }
+
 
         data.gen_assets.dubodata2.upload_data(&context);
 
         {
             let mut render_pass = context.get_render_pass(&mut frame, &data.gen_assets.renderer_main_renderTexture);
 
-            render_pass.set_pipeline(&mut data.mat1.pipeline);
+            render_pass.set_pipeline(&mut data.mat2.pipeline);
 
             render_pass.set_bind_group(0, &data.bind_group0.bind_group, &[]);
             render_pass.set_bind_group(1, &data.bind_group1.bind_group, &[]);
 
-            for i in 0..objects_to_draw.len()  {
+            {
+                let obj = objects_to_draw[0];
+                let gutid = obj.0 as usize;
+                
+                render_pass.set_bind_group(2, &data.bind_group2_lin[obj.1 as usize].bind_group, &[0]);
+                render_pass.set_bind_group(3, &data.bind_group3.bind_group, &[]);
+
+                render_pass.set_vertex_buffer(0, data.gen_assets.meshes[gutid].buffer.slice(..));
+                render_pass.draw(0..data.gen_assets.meshes[gutid].vertex_count, 0..1);
+            }
+
+            render_pass.set_pipeline(&mut data.mat1.pipeline);
+
+            for i in 1..objects_to_draw.len()  {
                 let obj = objects_to_draw[i];
 
                 if obj.2 {
@@ -215,7 +331,7 @@ pub fn draw_free_uniform_text(text: &str, position: Vec2, offset: Vec2, text_siz
             egui::Align2::CENTER_CENTER,
             part,
             egui::FontId::proportional(text_size),
-            egui::Color32::WHITE,
+            egui::Color32::BLACK,
         );
     }    
 }
@@ -231,6 +347,6 @@ pub fn draw_free_left_text(text: &str, position: Vec2, offset: Vec2, text_size: 
         egui::Align2::LEFT_CENTER,
         text,
         egui::FontId::proportional(text_size),
-        egui::Color32::WHITE,
+        egui::Color32::BLACK,
     );
 }
