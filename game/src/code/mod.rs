@@ -10,8 +10,8 @@ pub use controler_inventory::*;
 mod controler_inventory_context_menu;
 pub use controler_inventory_context_menu::*;
 
-mod controler_health_managment;
-pub use controler_health_managment::*;
+mod health_system;
+pub use health_system::*;
 
 mod level_system;
 pub use level_system::*;

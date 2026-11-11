@@ -41,7 +41,6 @@ fn main() {
     schedule.add_systems(controler_gameplay);
     schedule.add_systems(controler_inventory);
     schedule.add_systems(controler_inventory_context_menu);
-    schedule.add_systems(controler_health_managment);
     schedule.add_systems(toggle_console_system);
     schedule.add_systems(tick_items);
     schedule.add_systems(bullet_provider);

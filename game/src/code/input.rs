@@ -6,24 +6,22 @@ use winit::keyboard::KeyCode;
 use crate::renderer::{draw_free_left_text};
 
 const LONG_DURATION: f32 = 0.1;
-const RESET_ALL_DURATION: f32 = 0.4;
+const RESET_ALL_DURATION: f32 = 0.25;
 const MEMORY_LENGTH: usize = 4;
 
 #[derive(PartialEq, Eq, Debug)]
 pub enum InputOwner {
     Gameplay,
     Inventory,
-    InventoryContextMenu,
-    HealthManagment
+    InventoryContextMenu
 }
 
 impl InputOwner {
     fn command_list(&self) -> &str {
         return match self {
-            InputOwner::Gameplay => { "__ = Walk\n_._ = Main Use\n_.. = Second Use\n.__ = Rotate Right\n._. = ???\n.._ = Rotate Left\n... = Inventory" }
-            InputOwner::Inventory => { "__ = Take\n_._ = Contex Menu\n_.. = Simple Use\n.__ = Rotate Right\n._. = Drop\n.._ = Rotate Left\n... = Gameplay" }
+            InputOwner::Gameplay => { "__ = Walk\n_._ = Rotate Right\n_.. = Inventory\n._ = Main Use\n.._ = Rotate Left\n... = Second Use" }
+            InputOwner::Inventory => { "__ = Context Menu\n_._ = Rotate Right\n_.. = Gameplay\n._ = Take\n.._ = Rotate Left\n... = Simple Use" }
             InputOwner::InventoryContextMenu => { "... = Inventory" }
-            InputOwner::HealthManagment => { "... = Inventory" }
         };
     }
 }

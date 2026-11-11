@@ -4,8 +4,8 @@ use smq_engine::*;
 
 use crate::{code::*, renderer::DrawedObject};
 
-const PLAYER_SPEED: f32 = 4.0;
-const PLAYER_ROTATION: f32 = 2.0;
+const PLAYER_SPEED: f32 = 8.0;
+const PLAYER_ROTATION: f32 = 3.0;
 const PICK_UP_DISTANCE: f32 = 2.0;
 
 const BULLET_SPEED: f32 = 25.0;
@@ -32,8 +32,7 @@ pub fn controler_gameplay(
                     input_getan.reset_long();
                     position(&mut obj, &mut freecam, time.delta);
                 }
-            } else if input_getan.now_setting == 3 {
-                if ine[0] == true && ine[1] == false && ine[2] == true  { // _._
+                if ine[0] == false && ine[1] == true { // ._
                     let is_long = hand_use(&mut commands, &mut inventory, &mut droped_items, 0, &mut obj, &mut health);
                     if is_long {
                         input_getan.reset_long();
@@ -41,7 +40,8 @@ pub fn controler_gameplay(
                         input_getan.reset_short();
                     }
                 }
-                if ine[0] == true && ine[1] == false && ine[2] == false  { // _..
+            } else if input_getan.now_setting == 3 {
+                if ine[0] == false && ine[1] == false && ine[2] == false  { // ...
                     let is_long = hand_use(&mut commands, &mut inventory, &mut droped_items, 4, &mut obj, &mut health);
                     if is_long {
                         input_getan.reset_long();
@@ -49,19 +49,15 @@ pub fn controler_gameplay(
                         input_getan.reset_short();
                     }
                 }
-                if ine[0] == false && ine[1] == true && ine[2] == true  { // .__
+                if ine[0] == false && ine[1] == false && ine[2] == true  { // .._
                     input_getan.reset_long();
                     rotate(-1.0, &mut sett.rotation, &mut obj, time.delta);
                 }
-                if ine[0] == false && ine[1] == false && ine[2] == true  { // .._
+                if ine[0] == true && ine[1] == false && ine[2] == true  { // _._
                     input_getan.reset_long();
                     rotate(1.0, &mut sett.rotation, &mut obj, time.delta);
                 }
-                if ine[0] == false && ine[1] == true && ine[2] == false  { // ._.
-                    input_getan.reset_short();
-                    log::info!("wolne");
-                }
-                if ine[0] == false && ine[1] == false && ine[2] == false  { // ...
+                if ine[0] == true && ine[1] == false && ine[2] == false  { // _..
                     input_getan.reset_short();
                     input_getan.owner = InputOwner::Inventory;
                 }

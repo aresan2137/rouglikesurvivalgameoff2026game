@@ -84,7 +84,6 @@ pub fn controler_inventory(
             }
 
             if gui_enabled {
-
                 if sett.item[sett.selected_item] != Item::None {    
                     let itemstat = sett.item[sett.selected_item].get_name_description();
 
@@ -92,25 +91,25 @@ pub fn controler_inventory(
                 }
 
                 let ine = input_getan.morse_input;
+
                 if input_getan.now_setting == 2 {
                     if ine[0] == true && ine[1] == true { // __
-                        input_getan.reset_short();
-                        let idx = sett.selected_item;
-                        sett.item.swap(idx, 6);
-                    }
-                } else if input_getan.now_setting == 3 {
-                    if ine[0] == true && ine[1] == false && ine[2] == true  { // _._
                         input_getan.reset_short();
                         if sett.item[sett.selected_item] != Item::None {
                             input_getan.owner = InputOwner::InventoryContextMenu;
                         }
                     }
-                    if ine[0] == true && ine[1] == false && ine[2] == false  { // _..
+                    if ine[0] == false && ine[1] == true { // ._
+                        input_getan.reset_short();
+                        let idx = sett.selected_item;
+                        sett.item.swap(idx, 6);
+                    }
+                } else if input_getan.now_setting == 3 {
+                    if ine[0] == false && ine[1] == false && ine[2] == false  { // ...
                         input_getan.reset_short();
                         log::info!("simple use");
                     }
-
-                    if ine[0] == false && ine[1] == true && ine[2] == true  { // .__
+                    if ine[0] == true && ine[1] == false && ine[2] == true  { // _._
                         input_getan.reset_short();
                         if sett.selected_item == 5 {
                             sett.selected_item = 0;
@@ -126,46 +125,7 @@ pub fn controler_inventory(
                             sett.selected_item -= 1;
                         }
                     }
-                    if ine[0] == false && ine[1] == true && ine[2] == false  { // ._.
-                        input_getan.reset_short();
-                        if sett.item[6] != Item::None {
-                            let pos = freecam.position.xy();
-                            commands.spawn((DrawedObject {
-                                position: pos.extend(-0.2),
-                                rotation: Quat::IDENTITY,
-                                size: Vec3::ONE,
-                                meshid: Meshes::mesh_Plane_smf,
-                                textureid: sett.item[6].get_texture().unwrap(),
-                                is_gui: false,
-                                enabled: true
-                            }, DropedItem {
-                                item: sett.item[6].clone(),
-                                position: pos
-                            }
-                            ));
-
-                            sett.item[6] = Item::None;
-                        } else if sett.item[sett.selected_item] != Item::None {
-                            let selectedid = sett.selected_item;
-                            let pos = freecam.position.xy();
-                            commands.spawn((DrawedObject {
-                                position: pos.extend(-0.2),
-                                rotation: Quat::IDENTITY,
-                                size: Vec3::ONE,
-                                meshid: Meshes::mesh_Plane_smf,
-                                textureid: sett.item[selectedid].get_texture().unwrap(),
-                                is_gui: false,
-                                enabled: true
-                            }, DropedItem {
-                                item: sett.item[selectedid].clone(),
-                                position: pos
-                            }
-                            ));
-
-                            sett.item[selectedid] = Item::None;
-                        }
-                    }
-                    if ine[0] == false && ine[1] == false && ine[2] == false { // ...
+                    if ine[0] == true && ine[1] == false && ine[2] == false { // _..
                         input_getan.reset_short();
                         input_getan.owner = InputOwner::Gameplay;
                     }
@@ -174,3 +134,43 @@ pub fn controler_inventory(
         }
     }
 }
+
+// if ine[0] == false && ine[1] == true && ine[2] == false  { // ._.
+//     input_getan.reset_short();
+//     if sett.item[6] != Item::None {
+//         let pos = freecam.position.xy();
+//         commands.spawn((DrawedObject {
+//             position: pos.extend(-0.2),
+//             rotation: Quat::IDENTITY,
+//             size: Vec3::ONE,
+//             meshid: Meshes::mesh_Plane_smf,
+//             textureid: sett.item[6].get_texture().unwrap(),
+//             is_gui: false,
+//             enabled: true
+//         }, DropedItem {
+//             item: sett.item[6].clone(),
+//             position: pos
+//         }
+//         ));
+
+//         sett.item[6] = Item::None;
+//     } else if sett.item[sett.selected_item] != Item::None {
+//         let selectedid = sett.selected_item;
+//         let pos = freecam.position.xy();
+//         commands.spawn((DrawedObject {
+//             position: pos.extend(-0.2),
+//             rotation: Quat::IDENTITY,
+//             size: Vec3::ONE,
+//             meshid: Meshes::mesh_Plane_smf,
+//             textureid: sett.item[selectedid].get_texture().unwrap(),
+//             is_gui: false,
+//             enabled: true
+//         }, DropedItem {
+//             item: sett.item[selectedid].clone(),
+//             position: pos
+//         }
+//         ));
+
+//         sett.item[selectedid] = Item::None;
+//     }
+// }
