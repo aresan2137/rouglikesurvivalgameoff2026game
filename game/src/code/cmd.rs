@@ -3,7 +3,7 @@ use egui::{self, Color32, ScrollArea, TextEdit};
 use smq_engine::*;
 use winit::keyboard::KeyCode;
 
-use crate::code::{InventorySettings, Item, ItemLiquidType, Level};
+use crate::{code::*, items::*};
 
 #[derive(Resource)]
 pub struct Console {
@@ -22,7 +22,7 @@ impl Default for Console {
     }
 }
 
-pub fn toggle_console_system(
+pub fn console_system(
     mut console: ResMut<Console>,
     input: Res<Inputs>,
     mut inventory: Query<&mut InventorySettings>,
@@ -95,12 +95,14 @@ fn parse_liquid(raw: &str) -> Option<ItemLiquidType> {
     match raw.to_lowercase().as_str() {
         "none" => Some(ItemLiquidType::None),
         "water" => Some(ItemLiquidType::Water),
-        "contaminatedwater" | "cont_water" => Some(ItemLiquidType::ContaminatedWater),
+        "contaminatedwater" | "cont_water" | "cwater" => Some(ItemLiquidType::ContaminatedWater),
         "applejuice" | "apple_juice" => Some(ItemLiquidType::AppleJuice),
         "orangejuice" | "orange_juice" => Some(ItemLiquidType::OrangeJuice),
         "gasoline" | "gas" => Some(ItemLiquidType::Gasoline),
         "antiserum" | "serum" => Some(ItemLiquidType::Antiserum),
-        _ => None,
+        "coagulant" => Some(ItemLiquidType::Coagulant),
+        "sterid" => Some(ItemLiquidType::Sterid),
+        _ => None
     }
 }
 
@@ -137,14 +139,13 @@ fn process_command(
                 console.history.push("  set_item 2 bottle300ml water 250".to_string());
                 console.history.push("  set_item 3 syringe antiserum 25".to_string());
                 console.history.push("  set_item 4 proteinbar".to_string());
-                console.history.push("liquids: none, water, contaminatedwater, applejuice, orangejuice, gasoline, antiserum".to_string());
                 return;
             }
 
             if args[0].eq_ignore_ascii_case("items") {
                 console.history.push("list of items:".to_string());
                 console.history.push("slots: 0..5".to_string());
-                console.history.push("liquids: none, water, contaminatedwater, applejuice, orangejuice, gasoline, antiserum".to_string());
+                console.history.push("liquids: none, water, contaminatedwater, applejuice, orangejuice, gasoline, antiserum, coagulant, sterid".to_string());
                 console.history.push("items:".to_string());
                 console.history.push("  none".to_string());
                 console.history.push("Guns:".to_string());

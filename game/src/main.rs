@@ -13,11 +13,13 @@ mod code;
 use wasm_bindgen::prelude::*;
 use winit::event_loop::EventLoop;
 
-use crate::{code::*, gen_bake::*, renderer::{DrawedObject, Renderer, load_assets, render}};
+use crate::{code::*, gen_bake::*, items::{start_items}, renderer::{DrawedObject, Renderer, load_assets, render}};
 
 mod gen_game;
 
 mod renderer;
+
+mod items;
 
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen(start))]
 #[allow(unused)]
@@ -41,9 +43,11 @@ fn main() {
     schedule.add_systems(controler_gameplay);
     schedule.add_systems(controler_inventory);
     schedule.add_systems(controler_inventory_context_menu);
-    schedule.add_systems(toggle_console_system);
-    schedule.add_systems(tick_items);
+    schedule.add_systems(console_system);
     schedule.add_systems(bullet_provider);
+    schedule.add_systems(player_health_system);
+
+    start_items(&mut world, &mut schedule);
 
     world.spawn((FreeCamera {
         position: Vec3::ZERO,
@@ -68,6 +72,7 @@ fn main() {
         antibiotic: 0.0,
         surowica: 0.0,
         blod_volume: 5.0,
+        coagulant: 0.0,
         body_parts: [
             BodyPartHealth {
                 infection: 0.0,
@@ -75,21 +80,12 @@ fn main() {
                 bleeding: 0.0,
                 antiseptic: 0.0,
                 soap: 0.0,
-                health: 1.0
+                health: 1.0,
+                sterid: 0.0
             }; 6
         ]
     }
     ));
-
-    world.spawn(DrawedObject {
-        position: Vec3::new(2.0, 2.0, 0.0),
-        rotation: Quat::IDENTITY,
-        size: Vec3::ONE,
-        meshid: Meshes::mesh_Plane_smf,
-        textureid: Textures::sprites_items_ProteinBar_png,
-        is_gui: false,
-        enabled: true
-    });
 
     setup_inventory(&mut world);
 

@@ -19,5 +19,6 @@ pub use level_system::*;
 mod cmd;
 pub use cmd::*;
 
-mod item;
-pub use item::*;
+mod bullet;
+pub use bullet::*;
+
