@@ -109,9 +109,7 @@ pub struct GenAssets {
     pub ubodata0: Ubo<UboData0>,
     pub ubodata1: Ubo<UboData1>,
     pub dubodata2: DynamicUbo<DUboData2>,
-    pub renderer_main_renderTexture: RenderTexture,
-    pub blitinfo: BlitInfo,
-    pub blit_group: BindGroupS,
+
     pub meshes: [Mesh; 3],
     pub textures: [TextureS; 39],
 }
@@ -497,45 +495,12 @@ impl GenAssets {
                 .take(1024)
                 .collect(),
         );
-        let renderer_main_renderTexture = RenderTexture::new(
-            context,
-            2560,
-            1440,
-            &[(
-                TextureFormat::Rgba8Unorm,
-                TextureUsages::RENDER_ATTACHMENT
-                    | TextureUsages::TEXTURE_BINDING
-                    | TextureUsages::empty(),
-                Some("renderer_main_renderTexture_0"),
-            )],
-            Some((
-                TextureFormat::Depth32Float,
-                TextureUsages::RENDER_ATTACHMENT | TextureUsages::empty(),
-                Some("renderer_main_renderTexture_depth"),
-            )),
-            FilterMode::Linear,
-        );
-
-        let blit_group = BindGroupS::new(
-            context,
-            &[
-                renderer_main_renderTexture.attachments[0]
-                    .get_texture_binding(ShaderStages::FRAGMENT, true),
-                renderer_main_renderTexture.attachments[0]
-                    .get_sampler_binding(ShaderStages::FRAGMENT),
-            ],
-            None,
-        );
-
-        let blitinfo = context.create_blit_pipeline(&blit_group);
 
         return Self {
             ubodata0,
             ubodata1,
             dubodata2,
-            renderer_main_renderTexture,
-            blitinfo,
-            blit_group,
+
             meshes,
             textures,
         };

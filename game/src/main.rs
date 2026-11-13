@@ -94,7 +94,8 @@ fn main() {
         schedule,
         event_loop.create_proxy(),
         ContextSettings {
-            present_mode: PresentMode::AutoVsync,
+            present_mode: PresentMode::Mailbox,
+            surface_depth: Some(TextureFormat::Depth32Float)
         },
         ContextEvents {
             renderer: Some(render),

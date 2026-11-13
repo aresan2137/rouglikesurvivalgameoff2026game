@@ -53,5 +53,5 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4f {
         discard;
     }
 
-    return tex; 
+    return vec4f(pow(tex.rgb, vec3f(1.0 / 2.2)), tex.a); 
 }

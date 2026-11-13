@@ -125,18 +125,17 @@ pub fn load_assets(context: &mut Context<Renderer>) {
         ))),
     });
 
-    let mat1 = RenderMaterial::new(
+    let mat1 = RenderMaterial::new_surface(
         context,
         None,
         None,
-        &gen_assets.renderer_main_renderTexture,
-        &mat1module,
+        context.holding.as_ref().unwrap().surface_format,
+        Some(TextureFormat::Depth32Float),
         None,
+        &mat1module,
         get_default_vert_layout(),
         Some(CompareFunction::Less),
-        &mat1layout,
-        None,
-        Some(true)
+        &mat1layout
     );
 
     let holding = context.holding.as_mut().unwrap();
@@ -162,18 +161,17 @@ pub fn load_assets(context: &mut Context<Renderer>) {
         ))),
     });
 
-    let mat2 = RenderMaterial::new(
+    let mat2 = RenderMaterial::new_surface(
         context,
         None,
         None,
-        &gen_assets.renderer_main_renderTexture,
-        &mat2module,
+        context.holding.as_ref().unwrap().surface_format,
+        Some(TextureFormat::Depth32Float),
         None,
+        &mat2module,
         get_default_vert_layout(),
         Some(CompareFunction::Less),
-        &mat2layout,
-        None,
-        Some(true)
+        &mat2layout
     );
 
     context.data = Some(Renderer {
@@ -268,8 +266,10 @@ pub fn render(context: &mut Context<Renderer>, full_output: ::egui::FullOutput) 
 
         data.gen_assets.dubodata2.upload_data(&context);
 
+        let egui_data = context.draw_egui_prepare(&mut frame, full_output);
+
         {
-            let mut render_pass = context.get_render_pass(&mut frame, &data.gen_assets.renderer_main_renderTexture);
+            let mut render_pass = context.get_surface_render_pass(&mut frame).forget_lifetime();
 
             render_pass.set_pipeline(&mut data.mat2.pipeline);
 
@@ -289,6 +289,8 @@ pub fn render(context: &mut Context<Renderer>, full_output: ::egui::FullOutput) 
 
             render_pass.set_pipeline(&mut data.mat1.pipeline);
 
+            let mut last_model = Meshes::mesh_Plane_smf as usize;
+
             for i in 1..objects_to_draw.len()  {
                 let obj = objects_to_draw[i];
 
@@ -297,19 +299,18 @@ pub fn render(context: &mut Context<Renderer>, full_output: ::egui::FullOutput) 
                     
                     render_pass.set_bind_group(2, &data.bind_group2_lin[obj.1 as usize].bind_group, &[i as u32 * 256]);
 
-                    render_pass.set_vertex_buffer(0, data.gen_assets.meshes[gutid].buffer.slice(..));
+                    if last_model != gutid {
+                        render_pass.set_vertex_buffer(0, data.gen_assets.meshes[gutid].buffer.slice(..));
+                        last_model = gutid;
+                    }
                     render_pass.draw(0..data.gen_assets.meshes[gutid].vertex_count, 0..1);
                 }
             }
+
+            context.draw_egui_in_pass(&egui_data, &mut render_pass);
         }
 
-        context.blit_screen(
-            &mut frame,
-            &data.gen_assets.blitinfo,
-            &data.gen_assets.blit_group,
-        );
-
-        context.draw_egui(&mut frame, full_output);
+        context.draw_egui_post_pass(egui_data);
 
         context.end_frame(frame);
     }
