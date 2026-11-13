@@ -1,25 +1,22 @@
 use bevy_ecs::prelude::*;
 use glam::*;
-
 use smq_engine::*;
-
 use wgpu::*;
 
 mod gen_bake;
-
 mod code;
+mod gen_game;
+mod renderer;
+mod items;
+
+use gen_bake::*;
+use code::*;
+use renderer::*;
+use items::*;
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 use winit::event_loop::EventLoop;
-
-use crate::{code::*, gen_bake::*, items::{start_items}, renderer::{DrawedObject, Renderer, load_assets, render}};
-
-mod gen_game;
-
-mod renderer;
-
-mod items;
 
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen(start))]
 #[allow(unused)]
@@ -42,12 +39,13 @@ fn main() {
     schedule.add_systems(read_input);
     schedule.add_systems(controler_gameplay);
     schedule.add_systems(controler_inventory);
-    schedule.add_systems(controler_inventory_context_menu);
     schedule.add_systems(console_system);
     schedule.add_systems(bullet_provider);
     schedule.add_systems(player_health_system);
 
     start_items(&mut world, &mut schedule);
+
+    start_inventory_context(&mut world, &mut schedule);
 
     world.spawn((FreeCamera {
         position: Vec3::ZERO,

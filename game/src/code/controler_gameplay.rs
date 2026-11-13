@@ -5,7 +5,7 @@ use smq_engine::*;
 use crate::{code::*, items::*, renderer::DrawedObject};
 
 const PLAYER_SPEED: f32 = 8.0;
-const PLAYER_ROTATION: f32 = 3.0;
+const PLAYER_ROTATION: f32 = 2.0;
 const PICK_UP_DISTANCE: f32 = 2.0;
 
 #[derive(Component)]

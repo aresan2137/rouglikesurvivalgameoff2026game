@@ -158,7 +158,7 @@ pub fn controler_inventory(
                         input_getan.owner = InputOwner::Gameplay;
                     }
                 }
-            } else {
+            } else if input_getan.owner == InputOwner::Gameplay {
                 if sett.item[6] != Item::None {
                     let pos = freecam.position.xy();
                     commands.spawn((DrawedObject {

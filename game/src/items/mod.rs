@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 use bevy_ecs::{message::message_update_system, prelude::*};
 use glam::*;
 use smq_engine::*;
@@ -5,19 +7,19 @@ use smq_engine::*;
 use crate::code::InventorySettings;
 
 mod tick;
-#[allow(unused_imports)]
 pub use tick::*;
 
 mod texture;
-#[allow(unused_imports)]
 pub use texture::*;
 
 mod name_description;
-#[allow(unused_imports)]
 pub use name_description::*;
 
 mod use_;
 pub use use_::*;
+
+mod context;
+pub use context::*;
 
 #[derive(Clone, PartialEq)]
 pub enum Item {

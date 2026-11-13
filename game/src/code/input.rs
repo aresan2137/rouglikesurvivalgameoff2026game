@@ -21,7 +21,7 @@ impl InputOwner {
         return match self {
             InputOwner::Gameplay => { "__ = Walk\n_._ = Rotate Right\n_.. = Inventory\n._ = Main Use\n.._ = Rotate Left\n... = Second Use" }
             InputOwner::Inventory => { "__ = Context Menu\n_._ = Rotate Right\n_.. = Gameplay\n._ = Take\n.._ = Rotate Left\n... = Simple Use" }
-            InputOwner::InventoryContextMenu => { "... = Inventory" }
+            InputOwner::InventoryContextMenu => { "__ = Inventory\n_._ = Rotate Right\n_.. = Togle Health Panel\n._ = Applay\n.._ = Rotate Left\n... = ???" }
         };
     }
 }

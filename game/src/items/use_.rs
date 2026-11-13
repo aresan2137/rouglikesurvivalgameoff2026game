@@ -250,33 +250,6 @@ fn drink_liquid(health: &mut PlayerHealth, drunk: f32, liquid: ItemLiquidType) {
     }
 }
 
-fn inject_liquid(health: &mut PlayerHealth, injected_ml: f32, liquid: ItemLiquidType) {
-    let torso = &mut health.body_parts[BodyPart::Torso as usize];
-
-    match liquid {
-        ItemLiquidType::None => {}
-        ItemLiquidType::Water => {}
-        ItemLiquidType::ContaminatedWater => {
-            torso.infection = (torso.infection + injected_ml / 50.0).min(1.0);
-            torso.health = (torso.health - injected_ml / 100.0).min(1.0);
-        }
-        ItemLiquidType::AppleJuice | ItemLiquidType::OrangeJuice => {
-            torso.infection = (torso.infection + injected_ml / 100.0).min(1.0);
-            torso.health = (torso.health - injected_ml / 80.0).min(1.0);
-        }
-        ItemLiquidType::Gasoline => {
-            torso.health = (torso.health - injected_ml / 20.0).min(1.0);
-            torso.infection = (torso.infection + injected_ml / 30.0).min(1.0);
-            health.blod_volume = (health.blod_volume - injected_ml / 50.0).max(0.0);
-        }
-        ItemLiquidType::Antiserum => {
-            health.surowica = (health.surowica + injected_ml / 25.0).min(1.0);
-        }
-        ItemLiquidType::Coagulant => {}
-        ItemLiquidType::Sterid => {}
-    }
-}
-
 fn light_up_torch(item: &mut Item) -> bool {
     return match item {
         Item::Torch((fuel, on)) => { if *fuel >= 0.05 { let wason = *on; *on = true; !wason } else { false } }
