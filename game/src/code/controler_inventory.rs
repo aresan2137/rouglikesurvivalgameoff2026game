@@ -78,7 +78,7 @@ pub fn controler_inventory(
     mut item_display: Query<(&InventoryItemDisplay, &mut DrawedObject), Without<InventorySettings>>,
     mut item_selector: Query<&mut DrawedObject, (With<InventorySelector>, Without<InventorySettings>, Without<InventoryItemDisplay>)>,
     mut player: Query<&FreeCamera, (Without<InventorySelector>, Without<InventorySettings>, Without<InventoryItemDisplay>)>,
-    mut use_item_writer: MessageWriter<UseItemMessage>,
+    mut use_item_writer: MessageWriter<UseItemMessage>
 ) {
     let gui_enabled = input_getan.owner == InputOwner::Inventory;
 

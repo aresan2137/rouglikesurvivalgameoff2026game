@@ -1,15 +1,15 @@
 use bevy_ecs::prelude::*;
 use glam::*;
 
-use crate::{code::*, gen_bake::*, renderer::DrawedObject};
+use crate::{code::*, gen_bake::*, items::*, renderer::DrawedObject};
 
 const MAX_CONTEXT_ELEMENTS: usize = 6;
 
 #[derive(Component)]
 pub struct ContextMenu {
     pub health_tab: bool,
-    pub index_normal: usize,
-    pub index_health: usize
+    pub selected: usize,
+    pub avavlible_elements: usize
 }
 
 #[derive(Component)]
@@ -22,7 +22,7 @@ pub struct ContextEmementItem {}
 
 pub fn start_inventory_context(world: &mut World, schedule: &mut Schedule) {
     world.spawn((DrawedObject {
-        position: Vec3::ZERO,
+        position: Vec3::new(0.0, 0.0, -0.50),
         rotation: Quat::IDENTITY,
         size: Vec3::new(4.0, 4.0, 4.0),
         meshid: Meshes::mesh_Plane_smf,
@@ -31,8 +31,8 @@ pub fn start_inventory_context(world: &mut World, schedule: &mut Schedule) {
         enabled: true
     }, ContextMenu {
         health_tab: false,
-        index_normal: 0,
-        index_health: 0
+        selected: 0,
+        avavlible_elements: 1
     }));
     for _ in 0..MAX_CONTEXT_ELEMENTS {
         world.spawn((DrawedObject {
@@ -70,20 +70,22 @@ fn gui_update(
     mut inventory_menu: Query<&mut InventorySettings>,
     mut elements_bg: Query<&mut DrawedObject, With<ContextEmementBG>>,
     mut elements_item: Query<&mut DrawedObject, (With<ContextEmementItem>, Without<ContextEmementBG>)>,
-    mut guy: Query<(&mut DrawedObject, &ContextMenu), (Without<ContextEmementBG>, Without<ContextEmementItem>)>
+    mut guy: Query<(&mut DrawedObject, &mut ContextMenu), (Without<ContextEmementBG>, Without<ContextEmementItem>)>
 ) {
     let gui_enabled = input_getan.owner == InputOwner::InventoryContextMenu;
     
     let Ok(inventory) = inventory_menu.single_mut() else { return; };
 
-    let Ok((mut obj, menu)) = guy.single_mut() else { return; };
+    let Ok((mut obj, mut menu)) = guy.single_mut() else { return; };
 
     obj.enabled = gui_enabled && menu.health_tab;
 
     let textures = inventory.item[inventory.selected_item].context_menu_normal_slot_requiriment_with_aproprieate_texturing();
     let slots_used = if menu.health_tab { 6 } else { textures.len() };
 
-    let mut positions = [Vec3::ZERO; MAX_CONTEXT_ELEMENTS];
+    menu.avavlible_elements = slots_used; 
+
+    let mut positions = [Vec2::ZERO; MAX_CONTEXT_ELEMENTS];
 
     let radius: f32 = 5.5;
 
@@ -94,7 +96,7 @@ fn gui_update(
             let x = angle.cos() * radius;
             let y = angle.sin() * radius;
 
-            positions[i] = Vec3::new(x, y, -0.51);
+            positions[i] = Vec2::new(x, y);
         }
     } else {
         for i in 0..slots_used {
@@ -107,7 +109,7 @@ fn gui_update(
             let x = angle.cos() * radius;
             let y = angle.sin() * radius;
 
-            positions[i] = Vec3::new(x, y, -0.51);    
+            positions[i] = Vec2::new(x, y);    
         }
     }
 
@@ -116,7 +118,8 @@ fn gui_update(
         element_bg.enabled = i < slots_used && gui_enabled;
 
         if i < slots_used && gui_enabled {
-            element_bg.position = positions[i];
+            element_bg.position = positions[i].extend(-0.51);
+            element_bg.size = if i == menu.selected { Vec3::new(1.2, 1.2, 1.2) } else { Vec3::ONE };
         }
     }
 
@@ -125,8 +128,8 @@ fn gui_update(
 
         if i < slots_used && gui_enabled && !menu.health_tab {
             element_item.textureid = textures[i];
-            
-            element_item.position = positions[i];
+            element_item.position = positions[i].extend(-0.52);
+            element_item.size = if i == menu.selected { Vec3::new(1.2, 1.2, 1.2) } else { Vec3::ONE };
         }
     }
 } 
@@ -134,38 +137,54 @@ fn gui_update(
 fn controler_inventory_context_menu(
     mut input_getan: ResMut<InputGetan>,
     mut context_menu: Query<&mut ContextMenu>,
-    mut inventory_menu: Query<&mut InventorySettings>
+    mut inventory_menu: Query<&mut InventorySettings>,
+    mut context_activate_writer: MessageWriter<ContextActivateMessage>
 ) {
     let gui_enabled = input_getan.owner == InputOwner::InventoryContextMenu;
     
     let Ok(inventory) = inventory_menu.single_mut() else { return; };
 
-    if let Ok(mut sett) = context_menu.single_mut() {
+    if let Ok(mut menu) = context_menu.single_mut() {
         if gui_enabled {
             let ine = input_getan.morse_input;
             if input_getan.now_setting == 2 {
                 if ine[0] == true && ine[1] == true { // __
                     input_getan.reset_short();
                     input_getan.owner = InputOwner::Inventory;
-                    sett.index_normal = 0;
-                    sett.index_health = 0;
+                    menu.selected = 0;
                 }
                 if ine[0] == false && ine[1] == true { // ._
                     input_getan.reset_short();
-                    log::info!("contex menu: ._");
+                    context_activate_writer.write(ContextActivateMessage { 
+                        location: ItemPos { pos: vec![inventory.selected_item] },
+                        is_health: menu.health_tab, 
+                        action: menu.selected 
+                    });
+
+                    input_getan.owner = InputOwner::Inventory;
+                    menu.selected = 0;
                 }
             } else if input_getan.now_setting == 3 {
                 if ine[0] == true && ine[1] == false && ine[2] == true  { // _._
                     input_getan.reset_short();
+                        if menu.selected == menu.avavlible_elements - 1 {
+                            menu.selected = 0;
+                        } else {
+                            menu.selected += 1;
+                        }
                 }
                 if ine[0] == false && ine[1] == false && ine[2] == true  { // .._
                     input_getan.reset_short();
+                        if menu.selected == 0 {
+                            menu.selected = menu.avavlible_elements - 1;
+                        } else {
+                            menu.selected -= 1;
+                        }
                 }
                 if ine[0] == true && ine[1] == false && ine[2] == false  { // _..
                     input_getan.reset_short();
-                    sett.health_tab = !sett.health_tab;
-                    sett.index_normal = 0;
-                    sett.index_health = 0;
+                    menu.health_tab = !menu.health_tab;
+                    menu.selected = if menu.health_tab { 5 } else { 0 };
                 }
                 if ine[0] == false && ine[1] == false && ine[2] == false  { // ...
                     input_getan.reset_short();

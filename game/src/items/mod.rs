@@ -86,12 +86,15 @@ pub enum ItemLiquidType {
 
 pub fn start_items(world: &mut World, schedule: &mut Schedule) {
     world.init_resource::<Messages<UseItemMessage>>();
+    world.init_resource::<Messages<ContextActivateMessage>>();
 
     schedule.add_systems((
         tick_items_inventory, 
         tick_items_ground,
         handle_simple_use_item_system,
-        message_update_system.after(handle_simple_use_item_system)
+        message_update_system.after(handle_simple_use_item_system),
+        handle_context_activate_system,
+        message_update_system.after(handle_context_activate_system)
     ));
 }
 
