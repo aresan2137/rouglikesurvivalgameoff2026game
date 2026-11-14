@@ -317,37 +317,3 @@ pub fn render(context: &mut Context<Renderer>, full_output: ::egui::FullOutput) 
 
     context.data = Some(data);
 }
-
-pub fn draw_free_uniform_text(text: &str, position: Vec2, offset: Vec2, text_size: f32) {
-    let Some(screen) = ui().input(|i| i.raw.screen_rect) else { log::error!("text not drawn screen rect missing"); return; };
-
-    let x = egui::remap(position.x, -1.0..=1.0, screen.left()..=screen.right()) + offset.x;
-    let y = egui::remap(position.y, -1.0..=1.0, screen.top()..=screen.bottom()) + offset.y;
-
-    let parts = text.split("\n");
-
-    for (i, part) in parts.enumerate() {
-        ui().layer_painter(egui::LayerId::background()).text(
-            egui::pos2(x, y + (i as f32 * (text_size + 4.0))),
-            egui::Align2::CENTER_CENTER,
-            part,
-            egui::FontId::proportional(text_size),
-            egui::Color32::BLACK,
-        );
-    }    
-}
-
-pub fn draw_free_left_text(text: &str, position: Vec2, offset: Vec2, text_size: f32) {
-    let Some(screen) = ui().input(|i| i.raw.screen_rect) else { log::error!("text not drawn screen rect missing"); return; };
-
-    let x = egui::remap(position.x, -1.0..=1.0, screen.left()..=screen.right()) + offset.x;
-    let y = egui::remap(position.y, -1.0..=1.0, screen.top()..=screen.bottom()) + offset.y;
-
-    ui().layer_painter(egui::LayerId::background()).text(
-        egui::pos2(x, y),
-        egui::Align2::LEFT_CENTER,
-        text,
-        egui::FontId::proportional(text_size),
-        egui::Color32::BLACK,
-    );
-}

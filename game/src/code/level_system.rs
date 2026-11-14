@@ -2,8 +2,10 @@ use bevy_ecs::prelude::*;
 use glam::*;
 use rand::Rng;
 
+use crate::code::*;
+
 pub const MAP_SIZE: USizeVec2 = USizeVec2::new(200, 200);
-pub const TILE_SCALE: f32 = 0.8;
+pub const TILE_SCALE: f32 = 1.0;
 
 #[repr(u8)]
 #[derive(PartialEq, Eq, Clone, Copy)]
@@ -11,21 +13,53 @@ pub enum LevelElement {
     None,
     Sand,
     Tile,
-    Wall
+    Wall,
+    END
 }
 
 #[derive(Resource)]
 pub struct Level {
     pub map: [LevelElement; MAP_SIZE.x * MAP_SIZE.y],
-    pub resend_data: bool
+    pub resend_data: bool,
+    pub level: usize
 }
 
 impl Default for Level {
     fn default() -> Self {
         return Self { 
             map: [LevelElement::None; MAP_SIZE.x * MAP_SIZE.y],
-            resend_data: true
+            resend_data: true,
+            level: 0
         };
+    }
+}
+
+impl Level {
+    pub fn get_element_at_global_pos(&self, global_pos: Vec2) -> LevelElement {
+        let tile = get_player_posion_tile(global_pos).round();
+
+        if tile.x < -0.5 || tile.y < -0.5 || tile.x >= MAP_SIZE.x as f32 - 0.5 || tile.y >= MAP_SIZE.y as f32 - 0.5 {
+            return LevelElement::None;
+        }
+
+        let idx = ((tile.y + 0.5) as usize) * MAP_SIZE.x + ((tile.x + 0.5) as usize);
+        return self.map[idx];
+    }
+}
+
+pub fn get_player_posion_tile(position: Vec2) -> Vec2 {
+    return ((Vec2::new(position.x, -position.y) * (1.0 / TILE_SCALE)) + (MAP_SIZE.as_vec2()) - Vec2::ONE) / 2.0;
+}
+
+pub fn level_system(mut level: ResMut<Level>, mut player: Query<&mut PlayerSettings>) {
+    let Ok(mut settings) = player.single_mut() else { return; };
+
+    let tilepos = get_player_posion_tile(settings.pos.truncate());
+
+    if tilepos.y < 0.5 {
+        level.level += 1;
+        level.generate_new_map();
+        settings.pos = Vec3::new(0.0, (MAP_SIZE.x as f32 * -TILE_SCALE) + 5.0, 0.0);
     }
 }
 
@@ -51,11 +85,16 @@ impl Level {
         self.resend_data = true;
         let mut rng = rand::thread_rng();
 
-        for y in 0..MAP_SIZE.y {
+        for y in 1..MAP_SIZE.y {
             for x in 0..MAP_SIZE.x {
                 self.map[x + y * MAP_SIZE.x] = LevelElement::Sand;
             }
         }
+
+        for x in 0..MAP_SIZE.x {
+            self.map[x] = LevelElement::END;
+        }
+        
 
         let complex_count = rng.gen_range(35..50);
 

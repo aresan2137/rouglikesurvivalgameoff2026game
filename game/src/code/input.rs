@@ -3,8 +3,6 @@ use glam::Vec2;
 use smq_engine::*;
 use winit::keyboard::KeyCode;
 
-use crate::renderer::{draw_free_left_text};
-
 const LONG_DURATION: f32 = 0.1;
 const RESET_ALL_DURATION: f32 = 0.25;
 const MEMORY_LENGTH: usize = 4;
@@ -113,6 +111,6 @@ pub fn read_input(mut input_getan: ResMut<InputGetan>, input: Res<Inputs>, time:
         text += if input_getan.morse_input[i] { "_" } else { "." };
     }
 
-    draw_free_left_text(&format!("code: {}\nstill holding: {}\nmode: {:?}", text, input_getan.still_holding, input_getan.owner), Vec2::new(-1.0, -0.8), Vec2::new(4.0, 0.0), 24.0);
-    draw_free_left_text(input_getan.owner.command_list(), Vec2::new(-1.0, -0.8), Vec2::new(4.0, 180.0), 24.0);
+    draw_free_left_text(&format!("code: {}\nstill holding: {}\nmode: {:?}", text, input_getan.still_holding, input_getan.owner), Vec2::new(-1.0, -0.7), Vec2::new(4.0, 0.0), 24.0);
+    draw_free_left_text(input_getan.owner.command_list(), Vec2::new(-1.0, -0.7), Vec2::new(4.0, 180.0), 24.0);
 }

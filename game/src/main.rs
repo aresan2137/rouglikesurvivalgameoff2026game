@@ -26,7 +26,7 @@ fn main() {
     let mut world = World::new();
     world.insert_resource(Delta::new());
     world.insert_resource(Inputs::default());
-    //world.insert_resource(FrameStats::default());
+    world.insert_resource(FrameStats::default().set_mode(FrameStatsMode::FreeTextAvgOnly));
     world.insert_resource(InputGetan::default());
     world.insert_resource(Console::default());
 
@@ -35,16 +35,17 @@ fn main() {
     world.insert_resource(level);
 
     let mut schedule = Schedule::default();
-    //schedule.add_systems(fps_logger);
+    schedule.add_systems(fps_logger);
     schedule.add_systems(read_input);
+    schedule.add_systems(level_system);
     schedule.add_systems(controler_gameplay);
-    schedule.add_systems(controler_inventory);
     schedule.add_systems(console_system);
     schedule.add_systems(bullet_provider);
     schedule.add_systems(player_health_system);
 
     start_items(&mut world, &mut schedule);
 
+    setup_inventory(&mut world, &mut schedule);
     start_inventory_context(&mut world, &mut schedule);
 
     world.spawn((FreeCamera {
@@ -63,8 +64,12 @@ fn main() {
         is_gui: false,
         enabled: true
     }, PlayerSettings {
-        rotation: 0.0
+        rotation: 0.0,
+        pos: Vec3::new(0.0, (MAP_SIZE.x as f32 * -TILE_SCALE) + 5.0, 0.0),
+        cam_pos: Vec3::ZERO,
+        turned_angle: 0.0
     }, PlayerHealth {
+        godmode: false,
         hunger: 0.0,
         thirst: 0.0,
         antibiotic: 0.0,
@@ -85,8 +90,6 @@ fn main() {
     }
     ));
 
-    setup_inventory(&mut world);
-
     let event_loop = EventLoop::with_user_event().build().unwrap();
 
     let mut context: Context<'_, Renderer> = Context::new(
@@ -94,7 +97,7 @@ fn main() {
         schedule,
         event_loop.create_proxy(),
         ContextSettings {
-            present_mode: PresentMode::Mailbox,
+            present_mode: PresentMode::AutoVsync,
             surface_depth: Some(TextureFormat::Depth32Float)
         },
         ContextEvents {

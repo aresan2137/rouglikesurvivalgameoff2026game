@@ -2,7 +2,7 @@ use bevy_ecs::prelude::*;
 use glam::*;
 use smq_engine::*;
 
-use crate::{code::*, gen_bake::*, items::*, renderer::{DrawedObject, draw_free_uniform_text}};
+use crate::{code::*, gen_bake::*, items::*, renderer::DrawedObject};
 
 #[derive(Component)]
 pub struct InventorySettings {
@@ -18,7 +18,9 @@ pub struct InventoryItemDisplay {
 #[derive(Component)]
 pub struct InventorySelector {}
 
-pub fn setup_inventory(world: &mut World) {
+pub fn setup_inventory(world: &mut World, schedule: &mut Schedule) {
+    schedule.add_systems(controler_inventory);
+
     world.spawn((DrawedObject {
         position: Vec3::new(0.0, 0.0, -0.5),
         rotation: Quat::IDENTITY,
@@ -71,7 +73,7 @@ pub fn setup_inventory(world: &mut World) {
     }
 }
 
-pub fn controler_inventory(
+fn controler_inventory(
     mut commands: Commands, 
     mut input_getan: ResMut<InputGetan>,
     mut inventory: Query<(&mut InventorySettings, &mut DrawedObject)>, 
